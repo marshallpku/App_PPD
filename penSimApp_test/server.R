@@ -1,12 +1,12 @@
 
-library(shiny)
-library(tidyverse)
+
 
 get_Aggliab <- function(ppd_id){
   load(paste0("./Data/Outputs_liab/liabScn_A1/liab_A1_",ppd_id, ".RData"))
   AggLiab
 }
 
+load("./Data/DataPPD.RData")
 
 RIG.blue  <- "#003598"
 RIG.red   <- "#A50021"
@@ -36,10 +36,9 @@ RIG.theme <- function(){
 
 
 
-
 # Define server logic required to draw a histogram
 shinyServer(function(input, output) {
-   
+    
     # 1. Obtain data of selected plan
     rv <- reactiveValues(ppd_id = 0,
                          Aggliab = list(0))
@@ -51,21 +50,53 @@ shinyServer(function(input, output) {
       print(rv$Aggliab$planData_list$inputs_singleValues$i)
     })
     
-    # output$text1 <- renderText({rv$ppd_id})
+     # output$text1 <- renderText({rv$ppd_id})
+    
+    # 2. defult values of funding policy inputs that depend on the choice of plan 
+    output$fundingPolicyUI <- renderUI({
+      tagList(
+        
+        radioButtons("amort_openclosed", "Amortization method: Open or Closed",
+                     c("Open" = "open",
+                       "Closed" = "closed"),
+                     selected = rv$Aggliab$planData_list$inputs_singleValues$amort_openclosed,
+                     inline = T),
+        
+        radioButtons("amort_pctdol", "Amortization: Constant Dollar or Constant Percent",
+                     c("Constant Dollar" = "cd",
+                       "Constant Perncent" = "cp"),
+                     selected = rv$Aggliab$planData_list$inputs_singleValues$amort_pctdol,
+                     inline = T),
+        
+        sliderInput("amort_year", "Amortization Period",    rv$Aggliab$planData_list$inputs_singleValues$amort_year, min = 1, max = 40, width = "100%"),
+        
+        sliderInput("asset_year", "Asset Smoothing Period", rv$Aggliab$planData_list$inputs_singleValues$asset_year, min = 0, max = 20, width = "100%")
+      )
+    })
+    
+    
     
     # 2. Run model
     outputs_list <- eventReactive(input$run, {
       source("./Model/ModelApp_RunControl.R", local = TRUE)
     
+      # Applying input values
       returnScn_sim$r.sd        <- input$sd/100
       returnScn_sim$r.geoMean   <- input$expReturn_geo/100  
       returnScn_sim$r.arithMean <- returnScn_sim$r.geoMean + returnScn_sim$r.sd ^2/2
   
+      rv$Aggliab$planData_list$inputs_singleValues$amort_pctdol     <- input$amort_pctdol
+      rv$Aggliab$planData_list$inputs_singleValues$amort_openclosed <- input$amort_openclosed 
+      rv$Aggliab$planData_list$inputs_singleValues$amort_year       <- input$amort_year
+      rv$Aggliab$planData_list$inputs_singleValues$asset_year       <- input$asset_year
+      
       rv$Aggliab$planData_list$inputs_singleValues$nsim <- input$nsim
       
+      # Generating investment return series
       source("./Model/Model_InvReturns.R", local = TRUE, echo = TRUE)
       i.r <- gen_returns(rv$Aggliab$planData_list$inputs_singleValues, returnScn_sim )
       
+      # Running simulation model
       source("./Model/Model_sim.R", local = TRUE, echo = TRUE)
       penSim_results <- run_sim(rv$Aggliab,
                                 i.r,
@@ -76,14 +107,13 @@ shinyServer(function(input, output) {
       source("./Model/Model_Master_sim.R", local = TRUE, echo = TRUE)
       df_riskMeasure
     })
+
     
-    output$text2 <- renderPlot({
-      
-      
-      
+    # 3. Creating outputs    
+    output$plot_dist <- renderPlot({
       
       # Distribution of funded ratio 
-      fig.title    <- "Distribution across simulations of funded ratio for the aggregate of 170 large public pension plans"
+      fig.title    <- paste0("Distribution across simulations of funded ratio of ", input$planName)
       fig.subtitle <- NULL
       fig_FRdist <- outputs_list()  %>% 
         select(year, FR.q25, FR.q50, FR.q75) %>% 
@@ -96,7 +126,7 @@ shinyServer(function(input, output) {
         geom_line() + 
         geom_point(size = 2) + 
         geom_hline(yintercept = 100, linetype = 2, size = 1) +
-        coord_cartesian(ylim = c(40,160)) + 
+        # coord_cartesian(ylim = c(40,160)) + 
         scale_x_continuous(breaks = c(2017, seq(2020, 2040, 5),2046)) + 
         scale_y_continuous(breaks = seq(0, 500, 20)) + 
         scale_color_manual(values = c(RIG.green, RIG.blue, RIG.red),  name = NULL, 
@@ -105,10 +135,115 @@ shinyServer(function(input, output) {
                            label  = c("75th percentile", "50th percentile", "25th percentile")) +
         labs(title = fig.title,
              subtitle = fig.subtitle,
-             x = NULL, y = "Total market-asset value \nas a percentage of total liability (%)") + 
+             x = NULL, y = "Market-asset value \nas a percentage of total liability (%)") + 
         theme(axis.text.x = element_text(size = 8)) + 
         RIG.theme()
-      fig_FRdist
-      })
+      #fig_FRdist
+    
+    
       
+      # Distribution of funded ratio 
+      fig.title    <- paste0("Distribution across simulations of employer contribution rate of ", input$planName)
+      fig.subtitle <- NULL
+      fig_ERC_PR_dist <- outputs_list() %>% 
+        select(year, ERC_PR.q25, ERC_PR.q50, ERC_PR.q75) %>% 
+        gather(type, value, -year) %>% 
+        ggplot(aes(x = year, y = value,
+                   color = factor(type, levels = c("ERC_PR.q75", "ERC_PR.q50", "ERC_PR.q25")),
+                   shape = factor(type, levels = c("ERC_PR.q75", "ERC_PR.q50", "ERC_PR.q25")))) + 
+        theme_bw() + 
+        #facet_grid(.~returnScn) + 
+        geom_line() + 
+        geom_point(size = 1.5) + 
+        # coord_cartesian(ylim = c(0,35)) + 
+        scale_x_continuous(breaks = c(2017, seq(2020, 2040, 5), 2046)) + 
+        scale_y_continuous(breaks = seq(0, 500, 5)) + 
+        scale_color_manual(values = c(RIG.red, RIG.blue, RIG.green),  name = NULL, 
+                           label  = c("75th percentile", "50th percentile", "25th percentile")) + 
+        scale_shape_manual(values = c(17, 16, 15, 18),  name = NULL, 
+                           label  = c("75th percentile", "50th percentile", "25th percentile")) +
+        labs(title = fig.title,
+             subtitle = fig.subtitle,
+             x = NULL, y = "Employer contribution \nas a percentage of total payroll (%)") + 
+        theme(axis.text.x = element_text(size = 8)) + 
+        RIG.theme()
+      #fig_ERC_PR_dist
+      
+      fig_dist <- grid.arrange(fig_FRdist, fig_ERC_PR_dist, ncol = 2, widths = c(1, 1))
+      
+    })
+    
+    
+    output$plot_risk <- renderPlotly({
+    
+    # Risk of low funded ratio
+    fig.title <- "Probabilities of funded ratio \nbelow 40% in any year up to the given year"
+    fig.subtitle <- NULL
+    fig_FR40less <- outputs_list() %>%
+      select(year, FR40less) %>%
+      gather(type, value, -year) %>% 
+      # mutate(type = factor(type, levels = c("FR75less", "FR60less", "FR40less"), labels = c("75%","60%", "40%" ))) %>% 
+      #mutate(FR40less.det = 0) %>% 
+      #gather(variable, value, -year) %>% 
+      ggplot(aes(x = year, y = value)) + 
+      theme_bw() + 
+      geom_point(size = 2, color = RIG.blue) + 
+      geom_line(color = RIG.blue) + 
+      #coord_cartesian(ylim = c(0,25)) + 
+      scale_y_continuous(breaks = seq(0,200, 5)) +
+      scale_x_continuous(breaks = c(2017, seq(2020, 2040, 5), 2046)) + 
+      #scale_color_manual(values = c(RIG.blue, RIG.red, RIG.red),  name = NULL) + 
+      #scale_shape_manual(values = c(17,16, 15),  name = NULL) +
+      labs(title = fig.title,
+           subtitle = fig.subtitle,
+           x = NULL, y = "Probability (%)") + 
+      guides(color = guide_legend(keywidth = 1.5, keyheight = 3))+
+      RIG.theme()+
+      theme(legend.position="none",
+            title =element_text(size=11)) 
+    # fig_FR40less
+    # fig_FR40less$data %>% filter(year == 2046)
+    
+
+    # Risk of sharp increase in ERC/PR
+    fig.title <- "Probability of contribution rising by more than 10% \nof payroll in a 5-year period up to the given year"
+    fig.subtitle <- NULL
+    fig_ERChike <- outputs_list() %>% 
+      #mutate(runname = factor(runname, labels = c(lab_s1, lab_s2))) %>%  
+      select(year, ERC_hike) %>% 
+      #mutate(ERChike.det = 0) %>% 
+      #gather(variable, value, - year) %>% 
+      ggplot(aes(x = year, y = ERC_hike)) + theme_bw() + 
+      geom_point(size = 2, color = RIG.blue) + 
+      geom_line(color = RIG.blue) + 
+      #coord_cartesian(ylim = c(0,40)) + 
+      #scale_y_continuous(breaks = seq(0,200, 5)) +
+      scale_x_continuous(breaks = c(2017, seq(2020, 2040, 5), 2046)) + 
+      #scale_color_manual(values = c(RIG.blue, RIG.red, RIG.green, RIG.purple),  name = "") + 
+      #scale_shape_manual(values = c(17,16, 15, 18, 19),  name = "") +
+      labs(title = fig.title,
+           subtitle = fig.subtitle,
+           x = NULL, y = "Probability (%)") + 
+      guides(color = guide_legend(keywidth = 1.5, keyheight = 3))+
+      RIG.theme() +
+      theme(title =element_text(size=11))
+    # fig_ERChike
+    # fig_ERChike$data %>% filter(year == 2046)
+    
+    #fig_2riskMeasures <- grid.arrange(fig_FR40less, fig_ERChike, ncol = 2, widths = c(1, 1))
+    #fig_2riskMeasures %>% grid.draw()
+    
+    fig_FR40less <- ggplotly(fig_FR40less)
+    fig_ERChike  <- ggplotly(fig_ERChike)
+    
+    subplot(fig_FR40less, fig_ERChike)
+    
+    })
+    
+    
+    
+    
+    
+    
+    
 })

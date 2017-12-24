@@ -64,9 +64,9 @@ library(readxl)
 library(stringr)
 library(zoo)
 library("readxl")
-library("XLConnect") # slow but convenient because it reads ranges; NOTE: I had to install Java 64-bit on Windows 10 64-bit to load properly
+#library("XLConnect") # slow but convenient because it reads ranges; NOTE: I had to install Java 64-bit on Windows 10 64-bit to load properly
 # library(xlsx)
-library("btools")
+# library("btools")
 options(dplyr.print_min = 60) # default is 10
 
 source("./Functions.R")
@@ -85,8 +85,12 @@ dir_outputs_liab    <- "./Data/Outputs_liab/"
 #file_Scn_liab <- "./Model/Scn_liab.xlsx"
 #df_liabScn    <- read_ExcelRange(file_Scn_liab, sheet = "liabScn" )
 
+# file_Scn_return <- "./Model/Scn_return.xlsx"
+# df_returnScn    <- read_ExcelRange(file_Scn_return, sheet = "returnScn" )
+
 file_Scn_return <- "./Model/Scn_return.xlsx"
-df_returnScn    <- read_ExcelRange(file_Scn_return, sheet = "returnScn" )
+df_returnScn <- read_excel(file_Scn_return, sheet = "returnScn", "A5:I11" )
+#getwd()
 
 
 #file_ppd <- "DataPPD.RData"

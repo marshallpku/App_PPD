@@ -276,12 +276,13 @@ run_sim <- function(AggLiab_ = AggLiab,
   #                                       Simuation  ####
   #*************************************************************************************************************
     
+  #withProgress(message = 'Running Model', value = 0, {
+  
   #cl <- makeCluster(ncore)
   cl <- makeCluster(6)
   registerDoParallel(cl)
   
-  
-  penSim_results <- foreach(k = -1:nsim, .packages = c("dplyr", "tidyr")) %dopar% {
+    penSim_results <- foreach(k = -1:nsim, .packages = c("dplyr", "tidyr", "shiny")) %dopar% {
     # k <- 0
     # initialize
     penSim   <- penSim0
@@ -292,6 +293,8 @@ run_sim <- function(AggLiab_ = AggLiab,
     penSim[["i.r"]] <- i.r_[, as.character(k)]
     
     source("Functions.R")
+    
+    #incProgress(1/(nsim + 2), detail = paste("Doing sim", i))
     
     for (j in 1:nyear){
         
@@ -488,6 +491,7 @@ run_sim <- function(AggLiab_ = AggLiab,
   
   stopCluster(cl)
   
+  #})
   
   
   
