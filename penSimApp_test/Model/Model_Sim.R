@@ -276,7 +276,8 @@ run_sim <- function(AggLiab_ = AggLiab,
   #                                       Simuation  ####
   #*************************************************************************************************************
     
-  cl <- makeCluster(ncore) 
+  #cl <- makeCluster(ncore)
+  cl <- makeCluster(6)
   registerDoParallel(cl)
   
   
@@ -501,7 +502,7 @@ run_sim <- function(AggLiab_ = AggLiab,
            plantype = plantype,
            State    = StateAbbrev,
            liabScn  = liabScn,
-           returnScn= returnScn,
+           #returnScn= returnScn,
            sim     = rep(-1:nsim, each = nyear),
            FR      = 100 * AA / exp(log(AL)),
            FR_MA   = 100 * MA / exp(log(AL)),
