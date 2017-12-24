@@ -37,7 +37,7 @@ library(readxl)
 library(stringr)
 library(zoo)
 
-source("./Model/Functions.R")
+source("Model/Functions.R")
 
 
 #*********************************************************************

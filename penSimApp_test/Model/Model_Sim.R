@@ -292,7 +292,7 @@ run_sim <- function(AggLiab_ = AggLiab,
     
     penSim[["i.r"]] <- i.r_[, as.character(k)]
     
-    source("./Model/Functions.R")
+    source("Model/Functions.R")
     
     #incProgress(1/(nsim + 2), detail = paste("Doing sim", i))
     

@@ -1,0 +1,12 @@
+name: penSimApp_test
+title: penSimApp_test
+username:
+account: yimengyin
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 251491
+bundleId: 1149749
+url: https://yimengyin.shinyapps.io/penSimApp_test/
+when: 1514151440.86546
+asMultiple: FALSE
+asStatic: FALSE

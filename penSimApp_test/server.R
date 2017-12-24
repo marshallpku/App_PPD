@@ -5,14 +5,14 @@
 #*********************************************************************
 
 get_Aggliab <- function(ppd_id){
-  load(paste0("./Data/Outputs_liab/liabScn_A1/liab_A1_",ppd_id, ".RData"))
+  load(paste0("Data/Outputs_liab/liabScn_A1/liab_A1_",ppd_id, ".RData"))
   AggLiab
 }
 
-load("./Data/DataPPD.RData")
+load("Data/DataPPD.RData")
 
-dir_outputs_liab    <- "./Data/Outputs_liab/"
-file_Scn_return <- "./Model/Scn_return.xlsx"
+dir_outputs_liab    <- "Data/Outputs_liab/"
+file_Scn_return <- "Model/Scn_return.xlsx"
 df_returnScn <- read_excel(file_Scn_return, sheet = "returnScn", "A5:I11" )
 
 model_sim_liabScn <- "A1"
@@ -109,18 +109,18 @@ shinyServer(function(input, output) {
       rv$Aggliab$planData_list$inputs_singleValues$nsim <- input$nsim
       
       # Generating investment return series
-      source("./Model/Model_InvReturns.R", local = TRUE, echo = TRUE)
+      source("Model/Model_InvReturns.R", local = TRUE, echo = TRUE)
       i.r <- gen_returns(rv$Aggliab$planData_list$inputs_singleValues, returnScn_sim )
       
       # Running simulation model
-      source("./Model/Model_sim.R", local = TRUE, echo = TRUE)
+      source("Model/Model_Sim.R", local = TRUE, echo = TRUE)
       penSim_results <- run_sim(rv$Aggliab,
                                 i.r,
                                 rv$Aggliab$planData_list$init_amort_unadj,
                                 rv$Aggliab$planData_list$init_unrecReturns_unadj,
                                 rv$Aggliab$planData_list$inputs_singleValues)
       
-      source("./Model/Model_Master_sim.R", local = TRUE, echo = TRUE)
+      source("Model/Model_Master_sim.R", local = TRUE, echo = TRUE)
       df_riskMeasure
     })
 
