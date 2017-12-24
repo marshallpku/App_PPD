@@ -1,5 +1,8 @@
 
 
+#*********************************************************************
+#                            Load data 
+#*********************************************************************
 
 get_Aggliab <- function(ppd_id){
   load(paste0("./Data/Outputs_liab/liabScn_A1/liab_A1_",ppd_id, ".RData"))
@@ -8,6 +11,19 @@ get_Aggliab <- function(ppd_id){
 
 load("./Data/DataPPD.RData")
 
+dir_outputs_liab    <- "./Data/Outputs_liab/"
+file_Scn_return <- "./Model/Scn_return.xlsx"
+df_returnScn <- read_excel(file_Scn_return, sheet = "returnScn", "A5:I11" )
+
+model_sim_liabScn <- "A1"
+model_sim_returnScn <- "return75"
+model_sim_ppd_id <- 0 # ppd_id_all[-c(1:40)]
+returnScn_sim <- df_returnScn %>% filter(returnScn == model_sim_returnScn) 
+
+
+#*********************************************************************
+#                            RIG Style
+#*********************************************************************
 RIG.blue  <- "#003598"
 RIG.red   <- "#A50021"
 RIG.green <- "#009900"
@@ -78,7 +94,7 @@ shinyServer(function(input, output) {
     
     # 2. Run model
     outputs_list <- eventReactive(input$run, {
-      source("./Model/ModelApp_RunControl.R", local = TRUE)
+      #source("./Model/ModelApp_RunControl.R", local = TRUE)
     
       # Applying input values
       returnScn_sim$r.sd        <- input$sd/100

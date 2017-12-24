@@ -1,6 +1,21 @@
 
 
+#*********************************************************************
+#                            Configure Shinyapp.io
+#*********************************************************************
 
+# Shinyapp.io with gmail account marshallpku@gmail.com
+library(rsconnect)
+
+# rsconnect::setAccountInfo(name='yimengyin', 
+#                           token='3585B8F296D58AE9DDC0392D37BCDD78', 
+#                           secret=)
+
+#*********************************************************************
+#                            Load packages
+#*********************************************************************
+
+gc()
 library(rsconnect)
 library(ggplot2)
 library(tidyverse)
@@ -8,12 +23,27 @@ library(grid)
 library(gridExtra)
 library(plotly)
 
-# Loading data
+library(knitr)
+#library(data.table)
+library(gdata) # read.xls
+#library(dplyr)
+options(dplyr.print_min = 100) # default is 10
+options(dplyr.print_max = 100) # default is 20
+library(magrittr)
+library(tidyr) # gather, spread
+library(foreach)
+library(doParallel)
+library(readxl)
+library(stringr)
+library(zoo)
+
+source("./Model/Functions.R")
+
+
+#*********************************************************************
+#                            Load data
+#*********************************************************************
 load("./Data/DataPPD.RData")
-
-
-
-
 
 # Define UI for application that draws a histogram
 shinyUI(fluidPage(
@@ -69,13 +99,9 @@ shinyUI(fluidPage(
          tabPanel("Measures of Risk", 
                   plotlyOutput("plot_risk",    width = 1200, height = 500)
          )
-         
+       )
+      )
     )
+   )
   )
-)
-
-
-
-)
-)
 

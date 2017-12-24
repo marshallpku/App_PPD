@@ -45,31 +45,31 @@
 #********************************************************************************
 
 #rm(list = ls())
-gc()
-
-library(knitr)
-library(data.table)
-library(gdata) # read.xls
-#library(plyr)
-library(dplyr)
-options(dplyr.print_min = 100) # default is 10
-options(dplyr.print_max = 100) # default is 20
-library(ggplot2)
-library(magrittr)
-library(tidyr) # gather, spread
-library(foreach)
-library(doParallel)
-library(microbenchmark)
-library(readxl)
-library(stringr)
-library(zoo)
-library("readxl")
-#library("XLConnect") # slow but convenient because it reads ranges; NOTE: I had to install Java 64-bit on Windows 10 64-bit to load properly
-# library(xlsx)
-# library("btools")
-options(dplyr.print_min = 60) # default is 10
-
-source("./Functions.R")
+# gc()
+# 
+# library(knitr)
+# library(data.table)
+# library(gdata) # read.xls
+# #library(plyr)
+# library(dplyr)
+# options(dplyr.print_min = 100) # default is 10
+# options(dplyr.print_max = 100) # default is 20
+# library(ggplot2)
+# library(magrittr)
+# library(tidyr) # gather, spread
+# library(foreach)
+# library(doParallel)
+# library(microbenchmark)
+# library(readxl)
+# library(stringr)
+# library(zoo)
+# library("readxl")
+# #library("XLConnect") # slow but convenient because it reads ranges; NOTE: I had to install Java 64-bit on Windows 10 64-bit to load properly
+# # library(xlsx)
+# # library("btools")
+# options(dplyr.print_min = 60) # default is 10
+# 
+# source("./Functions.R")
 
 
 
@@ -96,11 +96,11 @@ df_returnScn <- read_excel(file_Scn_return, sheet = "returnScn", "A5:I11" )
 #file_ppd <- "DataPPD.RData"
 #load(paste0(dir_data_ppd, file_ppd))
 
-ppd_id_all        <- PPD_data$ppd_id
-ppd_id_largePlans <- c(9,  26, 83, 85,  125,
-                       72, 84, 86, 140, 150,
-                       10, 28, 78, 88,  108)
-ppd_id_smallPlans <- setdiff(ppd_id_all, ppd_id_largePlans)
+# ppd_id_all        <- PPD_data$ppd_id
+# ppd_id_largePlans <- c(9,  26, 83, 85,  125,
+#                        72, 84, 86, 140, 150,
+#                        10, 28, 78, 88,  108)
+# ppd_id_smallPlans <- setdiff(ppd_id_all, ppd_id_largePlans)
 
 
 # #********************************************************************************                          
