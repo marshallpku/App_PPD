@@ -271,7 +271,20 @@ run_sim <- function(AggLiab_ = AggLiab,
   # SC_amort0 %>% colSums()
   # init_amort_raw_$balance %>% sum
   # init_amort_raw_
-  # 
+  
+  #*************************************************************************************************************
+  #                                       Adjusting deferred returns   ####
+  #*************************************************************************************************************
+  
+  if(MA.year1 == AA.year1){
+    init_unrecReturns.adj <-  mutate(init_unrecReturns.unadj_, DeferredReturn.annualTot = 0)
+    
+  } else { 
+    init_unrecReturns.adj <-  mutate(init_unrecReturns.unadj_, DeferredReturn = DeferredReturn * (MA.year1 - AA.year1)/sum(DeferredReturn),
+                                     DeferredReturn.annualTot = sum(DeferredReturn) - cumsum(DeferredReturn) # Initial unrecognized return to be subtracted from AA in each year
+    )
+  }
+  
   #*************************************************************************************************************
   #                                       Simuation  ####
   #*************************************************************************************************************
@@ -336,14 +349,14 @@ run_sim <- function(AggLiab_ = AggLiab,
       if(k != -1 & asset_year != 1){
         # Adjusting initila unrecognized returns
         
-        if(penSim$MA[1] == penSim$AA[1]){
-          init_unrecReturns.adj <-  mutate(init_unrecReturns.unadj_, DeferredReturn.annualTot = 0)
-          
-        } else { 
-          init_unrecReturns.adj <-  mutate(init_unrecReturns.unadj_, DeferredReturn = DeferredReturn * (penSim$MA[1] - penSim$AA[1])/sum(DeferredReturn),
-                                           DeferredReturn.annualTot = sum(DeferredReturn) - cumsum(DeferredReturn) # Initial unrecognized return to be subtracted from AA in each year
-          )
-          }
+        # if(penSim$MA[1] == penSim$AA[1]){
+        #   init_unrecReturns.adj <-  mutate(init_unrecReturns.unadj_, DeferredReturn.annualTot = 0)
+        #   
+        # } else { 
+        #   init_unrecReturns.adj <-  mutate(init_unrecReturns.unadj_, DeferredReturn = DeferredReturn * (penSim$MA[1] - penSim$AA[1])/sum(DeferredReturn),
+        #                                    DeferredReturn.annualTot = sum(DeferredReturn) - cumsum(DeferredReturn) # Initial unrecognized return to be subtracted from AA in each year
+        #   )
+        #   }
         
 
         # Adjust AA for inital unrecognized returns
@@ -437,6 +450,8 @@ run_sim <- function(AggLiab_ = AggLiab,
       
       # TEMP: plan specific ERC rules
       
+      
+      
       # 86 OH OPF
       if(ppd_id == 86 & k!=-1 )  penSim$ERC[j] <- penSim$PR[j] * 0.2161
       
@@ -510,26 +525,26 @@ run_sim <- function(AggLiab_ = AggLiab,
            sim     = rep(-1:nsim, each = nyear),
            FR      = 100 * AA / exp(log(AL)),
            FR_MA   = 100 * MA / exp(log(AL)),
-           UAAL_PR = 100 * UAAL / PR,
-           MA_PR   = 100 * MA / PR,
-           AA_PR   = 100 * AA / PR,
-           AL_PR   = 100 * AL / PR,
-           AL.act_PR    = 100 * AL.act / PR,
-           AL.la_PR    = 100 * AL.la / PR, 
-           AL.term_PR   = 100 * AL.term / PR, 
-           ADC_PR  = 100 * ADC / PR,
+           #UAAL_PR = 100 * UAAL / PR,
+           #MA_PR   = 100 * MA / PR,
+           #AA_PR   = 100 * AA / PR,
+           #AL_PR   = 100 * AL / PR,
+           #AL.act_PR    = 100 * AL.act / PR,
+           #AL.la_PR    = 100 * AL.la / PR, 
+           #AL.term_PR   = 100 * AL.term / PR, 
+           #ADC_PR  = 100 * ADC / PR,
            NC_PR   = 100 * NC / PR,
-           NC.la_PR    = 100 * NC.la / PR,
-           NC.v_PR   = 100 * NC.v / PR,
+           #NC.la_PR    = 100 * NC.la / PR,
+           #NC.v_PR   = 100 * NC.v / PR,
            SC_PR   = 100 * SC / PR, 
            ERC_PR  = 100 * ERC / PR,
-           EEC_PR  = 100 * EEC / PR, 
-           C_PR    = 100 * C / PR,
-           B_PR    = 100 * B / PR,
-           ExF     = C - B,
-           ExF_PR  = 100 * ExF / PR,
-           ExF_MA  = 100 * ExF / MA, 
-           PR.growth = ifelse(year > 1, 100 * (PR / lag(PR) - 1), NA)
+           EEC_PR  = 100 * EEC / PR
+           #C_PR    = 100 * C / PR,
+           #B_PR    = 100 * B / PR,
+           #ExF     = C - B,
+           #ExF_PR  = 100 * ExF / PR,
+           #ExF_MA  = 100 * ExF / MA, 
+           #PR.growth = ifelse(year > 1, 100 * (PR / lag(PR) - 1), NA)
            
            ) %>%
     select(ppd_id, planName, plantype, State, sim, year, everything())
