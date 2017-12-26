@@ -69,7 +69,10 @@ shinyUI(fluidPage(
   ),
   
   # Application title
-  titlePanel(tags$h1("Public Pension Simulation Model")),
+  titlePanel(tags$div(
+                  tags$h1("Public Pension Simulation Model"),
+                  tags$h4("Version v 0.1.2"))
+             ),
              
   
   # Sidebar with a slider input for number of bins 
