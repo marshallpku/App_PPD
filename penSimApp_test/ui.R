@@ -32,7 +32,8 @@ options(dplyr.print_max = 100) # default is 20
 library(magrittr)
 library(tidyr) # gather, spread
 library(foreach)
-library(doParallel)
+#library(doParallel)
+library(doSNOW)
 library(readxl)
 library(stringr)
 library(zoo)
@@ -80,8 +81,8 @@ shinyUI(fluidPage(
       hr(),
        
       # Button to run model
-      numericInput("nsim", "Number of simulations",  100,  min = 1, max = 2000),
-      actionButton("run", "Run Model")
+      numericInput("nsim", "Number of simulations",  500,  min = 1, max = 2000),
+      actionButton("run", "Run Simulation")
             
       
     ),

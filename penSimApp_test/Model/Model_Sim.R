@@ -293,9 +293,23 @@ run_sim <- function(AggLiab_ = AggLiab,
   
   #cl <- makeCluster(ncore)
   cl <- makeCluster(6)
-  registerDoParallel(cl)
+  #registerDoParallel(cl)
+  registerDoSNOW(cl)
   
-    penSim_results <- foreach(k = -1:nsim, .packages = c("dplyr", "tidyr", "shiny")) %dopar% {
+  #iterations <- 100
+  # pb <- txtProgressBar(max = nsim + 2, style = 3)
+  # progress <- function(n) setTxtProgressBar(pb, n)
+  # opts <- list(progress = progress)
+  
+  progress <- shiny::Progress$new()
+  on.exit(progress$close())
+  
+  progress$set(message = "Running simulations...", value = 0)
+  fn.progress <- function(n) {progress$inc(1/(nsim + 2))} #, detail = paste("Doing part", ))}
+  opts <- list(progress = fn.progress)
+  
+  penSim_results <- foreach(k = -1:nsim, .packages = c("dplyr", "tidyr", "shiny"),
+                              .options.snow = opts) %dopar% {
     # k <- 0
     # initialize
     penSim   <- penSim0
