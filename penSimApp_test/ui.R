@@ -2,7 +2,7 @@
 #                            Version Info
 #*********************************************************************
 
-version <-  "0.1.3"
+version <-  "0.1.4"
   
 #*********************************************************************
 #                            Configure Shinyapp.io
@@ -75,13 +75,13 @@ shinyUI(fluidPage(
   # Application title
   titlePanel(tags$div(
                   tags$h1("Public Pension Simulation Model"),
-                  tags$h4(paste0("Version v ", version)))
+                  tags$h4(paste0("Version ", version)))
              ),
              
   
   # Sidebar with a slider input for number of bins 
   sidebarLayout(
-    sidebarPanel(
+    sidebarPanel(width = 3,
       
       # Selecting Plan (use obsereEvent in server to reflect the change)
       selectInput("planName", "Select a plan",
@@ -123,17 +123,34 @@ shinyUI(fluidPage(
     ),
     
     # Show a plot of the generated distribution
-    mainPanel(
-
+    mainPanel(width = 9,
        tabsetPanel(
-         tabPanel("Distribution of Outcomes", 
+         tabPanel("Distribution of Outcomes",
                   # plotOutput("plot_FRdist",  width = 600, height = 500),
                   # plotOutput("plot_ERCdist", width = 600, height = 500)
-                  plotOutput("plot_dist",  width = 1200, height = 500)
+                  # plotOutput("plot_dist",  width = 1200, height = 500)
+                  
+                  fluidRow(
+                    column(6,
+                           plotOutput("plot_FRdist",  width = 600, height = 500)),
+                    column(6,
+                           plotOutput("plot_ERCdist", width = 600, height = 500))
+                  )
+                  
                   ),
          
-         tabPanel("Measures of Risk", 
-                  plotlyOutput("plot_risk",    width = 1200, height = 500)
+         tabPanel("Measures of Risk",
+                  
+                  fluidRow(
+                    column(6,
+                           plotlyOutput("plot_FR40less",    width = 600, height = 500)),
+                    column(6,
+                           plotlyOutput("plot_ERChike",    width = 600, height = 500))
+                    )
+                  
+                  
+                  
+                  #plotlyOutput("plot_risk",    width = 1200, height = 500)
          )
        )
       )

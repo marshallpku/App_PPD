@@ -135,8 +135,11 @@ shinyServer(function(input, output) {
     })
 
     
-    # 3. Creating outputs    
-    output$plot_dist <- renderPlot({
+    # 3. Creating outputs   
+    
+    output$text <- renderText(input$planName)
+    
+    output$plot_FRdist <- renderPlot({
       
       # Distribution of funded ratio 
       fig.title    <- paste0("Distribution across simulations of funded ratio of ", rv$planName)
@@ -164,10 +167,13 @@ shinyServer(function(input, output) {
              x = NULL, y = "Market-asset value \nas a percentage of total liability (%)") + 
         theme(axis.text.x = element_text(size = 8)) + 
         RIG.theme()
-      #fig_FRdist
-    
-    
+      fig_FRdist
       
+      #fig_FRdist <- ggplotly(fig_FRdist)
+      
+    })
+    
+      output$plot_ERCdist <- renderPlot({
       # Distribution of funded ratio 
       fig.title    <- paste0("Distribution across simulations of employer contribution rate of ", rv$planName)
       fig.subtitle <- NULL
@@ -193,14 +199,16 @@ shinyServer(function(input, output) {
              x = NULL, y = "Employer contribution \nas a percentage of total payroll (%)") + 
         theme(axis.text.x = element_text(size = 8)) + 
         RIG.theme()
-      #fig_ERC_PR_dist
+      fig_ERC_PR_dist
       
-      fig_dist <- grid.arrange(fig_FRdist, fig_ERC_PR_dist, ncol = 2, widths = c(1, 1))
+      #fig_ERC_PR_dist <- ggplotly(fig_ERC_PR_dist)
+      
+      #fig_dist <- grid.arrange(fig_FRdist, fig_ERC_PR_dist, ncol = 2, widths = c(1, 1))
       
     })
     
     
-    output$plot_risk <- renderPlotly({
+    output$plot_FR40less <- renderPlotly({
     
     # Risk of low funded ratio
     fig.title <- "Probabilities of funded ratio \nbelow 40% in any year up to the given year"
@@ -230,7 +238,10 @@ shinyServer(function(input, output) {
     # fig_FR40less
     # fig_FR40less$data %>% filter(year == 2046)
     
+    fig_FR40less <- ggplotly(fig_FR40less)
+    })
 
+    output$plot_ERChike <- renderPlotly({
     # Risk of sharp increase in ERC/PR
     fig.title <- "Probability of contribution rising by more than 10% \nof payroll in a 5-year period up to the given year"
     fig.subtitle <- NULL
@@ -258,11 +269,10 @@ shinyServer(function(input, output) {
     
     #fig_2riskMeasures <- grid.arrange(fig_FR40less, fig_ERChike, ncol = 2, widths = c(1, 1))
     #fig_2riskMeasures %>% grid.draw()
-    
-    fig_FR40less <- ggplotly(fig_FR40less)
+
     fig_ERChike  <- ggplotly(fig_ERChike)
     
-    subplot(fig_FR40less, fig_ERChike)
+    #subplot(fig_FR40less, fig_ERChike)
     
     })
     
