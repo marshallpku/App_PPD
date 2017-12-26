@@ -12,6 +12,16 @@ library(rsconnect)
 #                           secret=)
 
 #*********************************************************************
+#                            References
+#*********************************************************************
+# Progress Bar
+ # https://shiny.rstudio.com/articles/progress.html
+ # https://stackoverflow.com/questions/5423760/how-do-you-create-a-progress-bar-when-using-the-foreach-function-in-r
+
+# Plotly
+ # https://plotly-book.cpsievert.me/merging-plotly-objects.html
+
+#*********************************************************************
 #                            Load packages
 #*********************************************************************
 
@@ -62,7 +72,7 @@ shinyUI(fluidPage(
     sidebarPanel(
       
       # Selecting Plan (use obsereEvent in server to reflect the change)
-      selectInput("planName", "Select Plan",
+      selectInput("planName", "Select a plan",
                   PPD_data$planName),
       
       hr(),
@@ -70,7 +80,7 @@ shinyUI(fluidPage(
       h4("Distribution of Investment Returns"),
       # Expected return and volatility
       numericInput("expReturn_geo", "Expected long-term compound return (%)", 7.5, min = -50, max = 50),
-      numericInput("sd",              "standard deviation (%)",                 12,  min = 0, max = 100),
+      numericInput("sd",              "Standard deviation (%)",                 12,  min = 0, max = 100),
       
       hr(),
       
@@ -82,7 +92,7 @@ shinyUI(fluidPage(
        
       # Button to run model
       numericInput("nsim", "Number of simulations",  500,  min = 1, max = 2000),
-      actionButton("run", "Run Simulation")
+      actionButton("run", "Run Model")
             
       
     ),
@@ -91,7 +101,7 @@ shinyUI(fluidPage(
     mainPanel(
 
        tabsetPanel(
-         tabPanel("Distribution of outcome", 
+         tabPanel("Distribution of Outcome", 
                   # plotOutput("plot_FRdist",  width = 600, height = 500),
                   # plotOutput("plot_ERCdist", width = 600, height = 500)
                   plotOutput("plot_dist",  width = 1200, height = 500)
