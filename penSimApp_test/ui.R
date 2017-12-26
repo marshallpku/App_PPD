@@ -1,5 +1,9 @@
+#*********************************************************************
+#                            Version Info
+#*********************************************************************
 
-
+version <-  "0.1.3"
+  
 #*********************************************************************
 #                            Configure Shinyapp.io
 #*********************************************************************
@@ -71,7 +75,7 @@ shinyUI(fluidPage(
   # Application title
   titlePanel(tags$div(
                   tags$h1("Public Pension Simulation Model"),
-                  tags$h4("Version v 0.1.2"))
+                  tags$h4(paste0("Version v ", version)))
              ),
              
   
@@ -105,7 +109,7 @@ shinyUI(fluidPage(
       
       conditionalPanel(
         condition = "input.ifFixedERCrate == 'TRUE'",
-        numericInput("fixedERCrate", "   Employer contribution as a fixed percentage of payroll (%)", 10,  min = 0, max = 100, , width = "50%")
+        numericInput("fixedERCrate", "   Employer contribution as a fixed percentage of payroll (%)", 10,  min = 0, max = 100, width = "50%")
       ),
       
       hr(),

@@ -63,8 +63,9 @@ shinyServer(function(input, output) {
                          Aggliab = list(0))
     
     observeEvent(input$planName, {
-      rv$ppd_id  <- PPD_data$ppd_id[which(PPD_data$planName_wID == input$planName)]
-      rv$Aggliab <- get_Aggliab(PPD_data$ppd_id[which(PPD_data$planName_wID == input$planName)])
+      rv$ppd_id   <- PPD_data$ppd_id[which(PPD_data$planName_wID == input$planName)]
+      rv$Aggliab  <- get_Aggliab(PPD_data$ppd_id[which(PPD_data$planName_wID == input$planName)])
+      rv$planName <- PPD_data$planName[which(PPD_data$planName_wID == input$planName)]
       #print(rv$ppd_id)
       print(rv$Aggliab$planData_list$inputs_singleValues$i)
     })
@@ -138,7 +139,7 @@ shinyServer(function(input, output) {
     output$plot_dist <- renderPlot({
       
       # Distribution of funded ratio 
-      fig.title    <- paste0("Distribution across simulations of funded ratio of ", input$planName)
+      fig.title    <- paste0("Distribution across simulations of funded ratio of ", rv$planName)
       fig.subtitle <- NULL
       fig_FRdist <- outputs_list()  %>% 
         select(year, FR.q25, FR.q50, FR.q75) %>% 
@@ -168,7 +169,7 @@ shinyServer(function(input, output) {
     
       
       # Distribution of funded ratio 
-      fig.title    <- paste0("Distribution across simulations of employer contribution rate of ", input$planName)
+      fig.title    <- paste0("Distribution across simulations of employer contribution rate of ", rv$planName)
       fig.subtitle <- NULL
       fig_ERC_PR_dist <- outputs_list() %>% 
         select(year, ERC_PR.q25, ERC_PR.q50, ERC_PR.q75) %>% 
