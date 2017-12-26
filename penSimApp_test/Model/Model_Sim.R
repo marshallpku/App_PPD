@@ -22,7 +22,13 @@ run_sim <- function(AggLiab_ = AggLiab,
      smooth_method <- "method1"
      nonNegC <- TRUE
      EEC_fixed <- TRUE
-
+     
+     if(ifFixedERCrate) {
+          ConPolicy    <- "Fixed"
+          PR_pct_fixed <- fixedERCrate
+          }
+     
+     
   # use calibrated values   
      AggLiab_$active <- AggLiab_$active.calib
      AggLiab_$la     <- AggLiab_$la.calib
@@ -454,12 +460,13 @@ run_sim <- function(AggLiab_ = AggLiab,
       
       
       # ERC
-      penSim$ERC[j] <- switch(ConPolicy,
-                              ADC     = with(penSim, ADC.ER[j]),                          # Full ADC
-                              ADC_cap = with(penSim, min(ADC.ER[j], PR_pct_cap * PR[j])), # ADC with cap. Cap is a percent of payroll 
-                              Fixed   = with(penSim, PR_pct_fixed * PR[j])                # Fixed percent of payroll
-      ) 
+       # penSim$ERC[j] <- switch(ConPolicy,
+       #                         ADC     = with(penSim, ADC.ER[j]),                          # Full ADC
+       #                         ADC_cap = with(penSim, min(ADC.ER[j], PR_pct_cap * PR[j])), # ADC with cap. Cap is a percent of payroll 
+       #                         Fixed   = with(penSim, PR_pct_fixed * PR[j])                # Fixed percent of payroll
+       # ) 
     
+      penSim$ERC[j] <- with(penSim, ADC.ER[j])
       
       
       # TEMP: plan specific ERC rules
@@ -486,6 +493,11 @@ run_sim <- function(AggLiab_ = AggLiab,
       # 88 HO STRS
       # 7.7%
       if(ppd_id == 88 & k!=-1)  penSim$ERC[j] <- penSim$PR[j] * 0.14
+      
+      
+      if(ConPolicy == "Fixed") penSim$ERC[j] <- with(penSim, PR_pct_fixed * PR[j])  
+      
+      
       
       
       

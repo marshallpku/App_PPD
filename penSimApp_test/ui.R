@@ -11,6 +11,8 @@ library(rsconnect)
 #                           token='3585B8F296D58AE9DDC0392D37BCDD78', 
 #                           secret=)
 
+# http://docs.rstudio.com/shinyapps.io/index.html
+
 #*********************************************************************
 #                            References
 #*********************************************************************
@@ -56,6 +58,9 @@ source("Model/Functions.R")
 #*********************************************************************
 load("./Data/DataPPD.RData")
 
+PPD_data %<>% 
+  mutate(planName_wID = paste0("PPD #", ppd_id," ", planName))
+
 # Define UI for application that draws a histogram
 shinyUI(fluidPage(
   
@@ -73,26 +78,39 @@ shinyUI(fluidPage(
       
       # Selecting Plan (use obsereEvent in server to reflect the change)
       selectInput("planName", "Select a plan",
-                  PPD_data$planName),
+                  PPD_data$planName_wID),
       
       hr(),
       
       h4("Distribution of Investment Returns"),
       # Expected return and volatility
-      numericInput("expReturn_geo", "Expected long-term compound return (%)", 7.5, min = -50, max = 50),
-      numericInput("sd",              "Standard deviation (%)",                 12,  min = 0, max = 100),
+      numericInput("expReturn_geo", "Expected long-term compound return (%)", 7.5, min = -50, max = 50, width = "50%"),
+      numericInput("sd",            "Standard deviation (%)",                 12,  min = 0, max = 100,  width = "50%"),
       
       hr(),
       
-      h4("Funding Policies Policies"), 
+      h4("Funding Policies"), 
       # Funding policy inputs (defined using renderUI in server.)
       uiOutput("fundingPolicyUI"),
       
+     
       hr(),
-       
+      
+      radioButtons("ifFixedERCrate", "Employer contribution is a fixed percentage of payroll (This will override other funding policies)",
+                   c("No"  = FALSE,
+                     "Yes" = TRUE), inline = TRUE),
+      
+      conditionalPanel(
+        condition = "input.ifFixedERCrate == 'TRUE'",
+        numericInput("fixedERCrate", "   Employer contribution as a fixed percentage of payroll (%)", 10,  min = 0, max = 100, , width = "50%")
+      ),
+      
+      hr(),
+      
       # Button to run model
-      numericInput("nsim", "Number of simulations",  500,  min = 1, max = 2000),
+      numericInput("nsim", "Number of simulations",  500,  min = 1, max = 2000, width = "50%"),
       actionButton("run", "Run Model")
+      
             
       
     ),
@@ -101,7 +119,7 @@ shinyUI(fluidPage(
     mainPanel(
 
        tabsetPanel(
-         tabPanel("Distribution of Outcome", 
+         tabPanel("Distribution of Outcomes", 
                   # plotOutput("plot_FRdist",  width = 600, height = 500),
                   # plotOutput("plot_ERCdist", width = 600, height = 500)
                   plotOutput("plot_dist",  width = 1200, height = 500)

@@ -10,6 +10,9 @@ get_Aggliab <- function(ppd_id){
 }
 
 load("Data/DataPPD.RData")
+PPD_data %<>% 
+  mutate(planName_wID = paste0("PPD #", ppd_id," ", planName))
+
 
 dir_outputs_liab    <- "Data/Outputs_liab/"
 file_Scn_return <- "Model/Scn_return.xlsx"
@@ -60,8 +63,8 @@ shinyServer(function(input, output) {
                          Aggliab = list(0))
     
     observeEvent(input$planName, {
-      rv$ppd_id  <- PPD_data$ppd_id[which(PPD_data$planName == input$planName)]
-      rv$Aggliab <- get_Aggliab(PPD_data$ppd_id[which(PPD_data$planName == input$planName)])
+      rv$ppd_id  <- PPD_data$ppd_id[which(PPD_data$planName_wID == input$planName)]
+      rv$Aggliab <- get_Aggliab(PPD_data$ppd_id[which(PPD_data$planName_wID == input$planName)])
       #print(rv$ppd_id)
       print(rv$Aggliab$planData_list$inputs_singleValues$i)
     })
@@ -79,8 +82,8 @@ shinyServer(function(input, output) {
                      inline = T),
         
         radioButtons("amort_pctdol", "Amortization: Constant Dollar or Constant Percent",
-                     c("Constant Dollar" = "cd",
-                       "Constant Perncent" = "cp"),
+                     c("Constant Dollar"   = "cd",
+                       "Constant Percent"  = "cp"),
                      selected = rv$Aggliab$planData_list$inputs_singleValues$amort_pctdol,
                      inline = T),
         
@@ -106,7 +109,13 @@ shinyServer(function(input, output) {
       rv$Aggliab$planData_list$inputs_singleValues$amort_year       <- input$amort_year
       rv$Aggliab$planData_list$inputs_singleValues$asset_year       <- input$asset_year
       
+      rv$Aggliab$planData_list$inputs_singleValues$ifFixedERCrate   <- input$ifFixedERCrate
+      
+      if(input$ifFixedERCrate) rv$Aggliab$planData_list$inputs_singleValues$fixedERCrate <- input$fixedERCrate/100
+      
       rv$Aggliab$planData_list$inputs_singleValues$nsim <- input$nsim
+      
+      
       
       # Generating investment return series
       source("Model/Model_InvReturns.R", local = TRUE, echo = TRUE)
