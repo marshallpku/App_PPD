@@ -2,7 +2,7 @@
 #                            Version Info
 #*********************************************************************
 
-version <-  "0.1.4"
+version <-  "0.1.5"
   
 #*********************************************************************
 #                            Configure Shinyapp.io
@@ -132,9 +132,9 @@ shinyUI(fluidPage(
                   
                   fluidRow(
                     column(6,
-                           plotOutput("plot_FRdist",  width = 600, height = 500)),
+                           plotlyOutput("plot_FRdist",  width = 600, height = 650)),
                     column(6,
-                           plotOutput("plot_ERCdist", width = 600, height = 500))
+                           plotlyOutput("plot_ERCdist", width = 600, height = 650))
                   )
                   
                   ),
@@ -143,9 +143,9 @@ shinyUI(fluidPage(
                   
                   fluidRow(
                     column(6,
-                           plotlyOutput("plot_FR40less",    width = 600, height = 500)),
+                           plotlyOutput("plot_FR40less",   width = 600, height = 600)),
                     column(6,
-                           plotlyOutput("plot_ERChike",    width = 600, height = 500))
+                           plotlyOutput("plot_ERChike",    width = 600, height = 600))
                     )
                   
                   
