@@ -11,9 +11,9 @@ version <-  "0.1.5"
 # Shinyapp.io with gmail account marshallpku@gmail.com
 library(rsconnect)
 
-# rsconnect::setAccountInfo(name='yimengyin', 
-#                           token='3585B8F296D58AE9DDC0392D37BCDD78', 
-#                           secret=)
+# rsconnect::setAccountInfo(name='yimengyin',
+#                           token='3585B8F296D58AE9DDC0392D37BCDD78',
+#                           secret='')
 
 # http://docs.rstudio.com/shinyapps.io/index.html
 
