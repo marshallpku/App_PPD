@@ -2,7 +2,7 @@
 #                            Version Info
 #*********************************************************************
 
-version <-  "0.1.5"
+version <-  "0.1.6"
   
 #*********************************************************************
 #                            Configure Shinyapp.io
@@ -33,6 +33,7 @@ library(rsconnect)
 
 gc()
 library(rsconnect)
+library(shinythemes)
 library(ggplot2)
 library(tidyverse)
 library(grid)
@@ -52,7 +53,7 @@ library(foreach)
 library(doSNOW)
 library(readxl)
 library(stringr)
-library(zoo)
+#library(zoo)
 
 source("Model/Functions.R")
 
@@ -66,7 +67,10 @@ PPD_data %<>%
   mutate(planName_wID = paste0("PPD #", ppd_id," ", planName))
 
 # Define UI for application that draws a histogram
-shinyUI(fluidPage(
+shinyUI(fluidPage(theme = shinytheme("cerulean"),
+  
+  #shinythemes::themeSelector(),
+  
   
   tags$head(
     tags$style(HTML("hr {border-top: 1px solid #C0C0C0;}"))
@@ -86,6 +90,10 @@ shinyUI(fluidPage(
       # Selecting Plan (use obsereEvent in server to reflect the change)
       selectInput("planName", "Select a plan",
                   PPD_data$planName_wID),
+      
+      # Button to run model
+      numericInput("nsim", "Number of simulations",  500,  min = 1, max = 2000, width = "50%"),
+      actionButton("run", "Run Model"),
       
       hr(),
       
@@ -110,13 +118,11 @@ shinyUI(fluidPage(
       conditionalPanel(
         condition = "input.ifFixedERCrate == 'TRUE'",
         numericInput("fixedERCrate", "   Employer contribution as a fixed percentage of payroll (%)", 10,  min = 0, max = 100, width = "50%")
-      ),
+      )
       
-      hr(),
+      #hr(),
       
-      # Button to run model
-      numericInput("nsim", "Number of simulations",  500,  min = 1, max = 2000, width = "50%"),
-      actionButton("run", "Run Model")
+      
       
             
       
