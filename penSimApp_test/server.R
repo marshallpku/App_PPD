@@ -137,9 +137,21 @@ shinyServer(function(input, output) {
     
     # 3. Creating outputs   
     
-    output$text <- renderText(input$planName)
+    # Clear outputs when a new plan is selected
+    #https://groups.google.com/forum/#!topic/shiny-discuss/PiU6PzQ_iSc
+    v <- reactiveValues(clearPlot = TRUE)
+    
+    observeEvent(input$planName, {
+      v$clearPlot <- TRUE
+    }, priority = 10)
+
+    observeEvent(input$run, {
+      v$clearPlot <- FALSE
+    }, priority = 10)
     
     output$plot_FRdist <- renderPlotly({
+      
+      if (v$clearPlot) return() else { 
       
       # Distribution of funded ratio 
       fig.title    <- paste0("Distribution across simulations of funded ratio")
@@ -185,10 +197,16 @@ shinyServer(function(input, output) {
         add_annotations(x = 0.5, y = 1.1, text = fig.title, 
                         xref = "paper", yref = "paper", showarrow= F) %>% 
         config(displayModeBar = "hover")
-      
+    
+  
+     # if(rv$ppd_id != unique(outputs_list()$ppd_id)) fig_FRdist <- NULL
+     }
     })
     
       output$plot_ERCdist <- renderPlotly({
+      
+        if (v$clearPlot) return() else {   
+        
       # Distribution of funded ratio 
       fig.title    <- paste0("Distribution across simulations of employer contribution rate")
       fig.subtitle <- NULL
@@ -232,11 +250,14 @@ shinyServer(function(input, output) {
                         xref = "paper", yref = "paper", showarrow= F) %>% 
         config(displayModeBar = "hover")
        # https://jsfiddle.net/ajzeigert/fmha6jmk/1/
+      }
     })
     
     
     output$plot_FR40less <- renderPlotly({
     
+    if (v$clearPlot) return() else { 
+      
     # Risk of low funded ratio
     fig.title <- "Probabilities of funded ratio \nbelow 40% in any year up to the given year"
     fig.subtitle <- NULL
@@ -278,10 +299,13 @@ shinyServer(function(input, output) {
       add_annotations(x = 0.5, y = 1.1, text = fig.title, 
                       xref = "paper", yref = "paper", showarrow= F) %>% 
       config(displayModeBar = "hover")
-    
+     }
     })
 
     output$plot_ERChike <- renderPlotly({
+    
+    if (v$clearPlot) return() else {   
+    
     # Risk of sharp increase in ERC/PR
     fig.title <- "Probability of contribution rising by more than 10% \nof payroll in a 5-year period up to the given year"
     fig.subtitle <- NULL
@@ -328,7 +352,7 @@ shinyServer(function(input, output) {
     
     
     #subplot(fig_FR40less, fig_ERChike)
-    
+     }
     })
     
     
