@@ -96,18 +96,18 @@ df_riskMeasure <- penSim_results  %>%
   group_by(sim) %>%
   mutate(FR_MA     = 100 * MA / AL,
          FR40less  = cumany(FR_MA <= 40),
-         FR100more  = cumany(FR_MA >= 100),
-         FR100more2 = FR_MA >= 100,
-         ERC_high  = cumany(ERC_PR >= 40),
+         #FR100more  = cumany(FR_MA >= 100),
+         #FR100more2 = FR_MA >= 100,
+         #ERC_high  = cumany(ERC_PR >= 40),
          ERC_hike  = cumany(na2zero(ERC_PR - lag(ERC_PR, 5) >= 10))) %>%
   group_by(year) %>%
   summarize(ppd_id = unique(ppd_id),
             #liabScn = unique(liabScn),
             #returnScn = unique(returnScn),
             FR40less   = 100 * sum(FR40less, na.rm = T)/n(),
-            FR100more  = 100 * sum(FR100more, na.rm = T)/n(),
-            FR100more2 = 100 * sum(FR100more2, na.rm = T)/n(),
-            ERC_high   = 100 * sum(ERC_high, na.rm = T)/n(),
+            #FR100more  = 100 * sum(FR100more, na.rm = T)/n(),
+            #FR100more2 = 100 * sum(FR100more2, na.rm = T)/n(),
+            #ERC_high   = 100 * sum(ERC_high, na.rm = T)/n(),
             ERC_hike   = 100 * sum(ERC_hike, na.rm = T)/n(),
 
             FR.q10   = quantile(FR_MA, 0.1,na.rm = T),
