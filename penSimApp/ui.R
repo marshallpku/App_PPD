@@ -79,7 +79,8 @@ shinyUI(fluidPage(theme = shinytheme("cerulean"),
   # Application title
   titlePanel(tags$div(
                   tags$h1("Public Pension Simulation Model"),
-                  tags$h4(paste0("Version ", version)))
+                  tags$h4(paste0("Version ", version))),
+             windowTitle = "Public Pension Simulation Model"
              ),
              
   

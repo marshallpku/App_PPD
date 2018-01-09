@@ -5,8 +5,8 @@ account: yimengyin
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 253411
-bundleId: 1160673
+bundleId: 1168962
 url: https://rockinst.shinyapps.io/penSimApp/
-when: 1515008512.21825
+when: 1515519701.72111
 asMultiple: FALSE
 asStatic: FALSE
